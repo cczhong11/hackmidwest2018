@@ -9,7 +9,7 @@ AWS.config.update({
 });
 
 var docClient = new AWS.DynamoDB.DocumentClient();
-
+var db = new AWS.DynamoDB();
 var table = "hackathon";
 
 
@@ -22,25 +22,23 @@ router.post('/', function (req, res, next) {
             TableName: table,
             Key: {
                 'macaddress': {
-                    S:  macaddress
+                    "S":  macaddress
                 },
             }
         };
-
-        ddb.getItem(params, function (err, data) {
+        var flag = 0;
+        db.getItem(get_params, function (err, data) {
             if (err) {
                 console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
             } else {
-                if (Object.keys(data).length === 0) {
-                    res.json({
-                        "status": "again"
-                    });
-                    return
+                console.log("Added item3 :", JSON.stringify(data));
+                if (data.Item.length !== 0) {
+                    flag = 1
                 }
-                console.log("Added item:", JSON.stringify(data));
+                
             }
         });
-
+        if(flag===0) {
         var params = {
             TableName: table,
             Item: {
@@ -63,7 +61,11 @@ router.post('/', function (req, res, next) {
         res.json({
             "status": "success"
         })
-
+    }else{
+        res.json({
+            "status": "again"
+        })
+    }
 
     }
 });
