@@ -32,19 +32,21 @@ router.post('/', function (req, res, next) {
                 console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
             } else {
                 console.log("Added item3 :", JSON.stringify(data));
-                if (data.Item.length !== 0) {
+                if ("Item" in data && data.Item.length !== 0) {
                     flag = 1
                 }
                 
             }
         });
         if(flag===0) {
+            var uuid=Math.random().toString(36).substring(2);
         var params = {
             TableName: table,
             Item: {
                 "macaddress": macaddress,
                 "phone": "not set",
                 "timestamp": new Date().toISOString(),
+                "uuid":uuid,
                 "info": {
                     "foursqure": "none",
                     "rating": 0
@@ -59,7 +61,7 @@ router.post('/', function (req, res, next) {
             }
         });
         res.json({
-            "status": "success"
+            "status": uuid
         })
     }else{
         res.json({
@@ -67,6 +69,33 @@ router.post('/', function (req, res, next) {
         })
     }
 
+    } 
+});
+router.get('/', function (req, res, next) {
+    if(req.query.op === "get"){
+        var macaddress = req.query.addr
+        // check whether it is in the table first
+        var get_params = {
+            TableName: table,
+            Key: {
+                'macaddress': {
+                    "S":  macaddress
+                },
+            }
+        };
+        db.getItem(get_params, function (err, data) {
+            if (err) {
+                console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+            } else {
+                console.log("Added item3 :", JSON.stringify(data));
+                if ("Item" in data && data.Item.length !== 0) {
+                    res.json({"status":"success"})
+                }else{
+                    res.json({"status":"fail"})
+                }
+                
+            }
+        });
     }
 });
 

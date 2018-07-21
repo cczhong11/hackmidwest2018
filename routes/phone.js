@@ -17,11 +17,15 @@ router.post('/', function (req, res, next) {
     console.log(JSON.stringify(req.query))
     if (req.query.op === "create") {
         var telephone = req.query.tel
+        var uuid = req.query.uuid
         // check whether it is in the table first
         var scan_params = {
             TableName : table,
-            FilterExpression: "phone = :p",
-            ExpressionAttributeValues:{":p": "not set"}
+            FilterExpression: "#u = :p ",
+            ExpressionAttributeNames:{
+                "#u": "uuid"
+            },
+            ExpressionAttributeValues:{":p": uuid}
         };
         
         docClient.scan(scan_params, function (err, data) {
