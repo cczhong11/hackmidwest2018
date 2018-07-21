@@ -22,7 +22,7 @@ router.post('/', function (req, res, next) {
             TableName: table,
             Key: {
                 'macaddress': {
-                    "S":  macaddress
+                    "S": macaddress
                 },
             }
         };
@@ -36,16 +36,15 @@ router.post('/', function (req, res, next) {
                     res.json({
                         "status": "again"
                     })
-                }else{
-
-                    var uuid=Math.random().toString(16).substring(2,7);
+                } else {
+                    var uuid = Math.random().toString(16).substring(2, 7);
                     var params = {
                         TableName: table,
                         Item: {
                             "macaddress": macaddress,
                             "phone": "not set",
                             "timestamp": new Date().toISOString(),
-                            "uuid":uuid,
+                            "uuid": uuid,
                             "info": {
                                 "foursqure": "none",
                                 "rating": 0
@@ -63,23 +62,22 @@ router.post('/', function (req, res, next) {
                         "status": uuid
                     })
                 }
-                
+
             }
         });
-        
-    
 
-    } 
+
+    }
 });
 router.get('/', function (req, res, next) {
-    if(req.query.op === "get"){
+    if (req.query.op === "get") {
         var macaddress = req.query.addr
         // check whether it is in the table first
         var get_params = {
             TableName: table,
             Key: {
                 'macaddress': {
-                    "S":  macaddress
+                    "S": macaddress
                 },
             }
         };
@@ -89,11 +87,11 @@ router.get('/', function (req, res, next) {
             } else {
                 console.log("Added item3 :", JSON.stringify(data));
                 if ("Item" in data && data.Item.length !== 0) {
-                    res.json({"status":"success"})
-                }else{
-                    res.json({"status":"fail"})
+                    res.json({"status": "success"})
+                } else {
+                    res.json({"status": "fail"})
                 }
-                
+
             }
         });
     }
