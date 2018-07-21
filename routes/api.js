@@ -69,7 +69,9 @@ router.post('/', function (req, res, next) {
         
     
 
-    } 
+    }else if(req.query.op==="postarray"){
+        console.log(req.body)
+    }
 });
 router.get('/', function (req, res, next) {
     if(req.query.op === "get"){
