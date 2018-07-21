@@ -1,11 +1,11 @@
+import {insertTelephoneNumber} from "../lib";
+
 var express = require('express');
 var router = express.Router();
 var MessagingResponse = require('twilio').twiml.MessagingResponse;
 
 
 var cloudinary = require('cloudinary');
-var base64Img = require('base64-img');
-
 cloudinary.config({
     cloud_name: 'dbjaiwx9o',
     api_key: '957379348547858',
@@ -31,6 +31,27 @@ function handleImageRequest(body, res) {
 }
 
 
+function handleTextRequest(body, res) {
+    const twiml = new MessagingResponse();
+
+    if(body.Body.startsWith("/register")) {
+        const uuid = body.Body.replace("/register ", "");
+        insertTelephoneNumber(uuid, body.From);
+        twiml.message("\nHi\n\n/menu to access this menu\n/upload-pic To upload a profile pic\n/say to say something to everyone");
+    }
+    else if (body.Body.startsWith("/say")) {
+        const msg = body.Body.replace("/say ", "");
+        // Send to everyone
+        console.log("send " + msg + " to everyone");
+    }
+    else {
+        twiml.message("\nHi\n\n/menu to access this menu\n/upload-pic To upload a profile pic\n/say to say something to everyone");
+    }
+
+    res.writeHead(200, {'Content-Type': 'text/xml'});
+    res.end(twiml.toString());
+}
+
 router.post("/sms", (req, res) => {
     const body = req.body;
     console.log(body);
@@ -40,10 +61,7 @@ router.post("/sms", (req, res) => {
         handleImageRequest(body, res);
     }
     else {
-        const twiml = new MessagingResponse();
-        res.writeHead(200, {'Content-Type': 'text/xml'});
-        twiml.message("\nHi\n\n/menu to access this menu\n");
-        res.end(twiml.toString());
+        handleTextRequest(body, res);
     }
 });
 
