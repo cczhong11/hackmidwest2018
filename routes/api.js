@@ -33,41 +33,41 @@ router.post('/', function (req, res, next) {
             } else {
                 console.log("Added item3 :", JSON.stringify(data));
                 if ("Item" in data && data.Item.length !== 0) {
-                    flag = 1
+                    res.json({
+                        "status": "again"
+                    })
+                }else{
+
+                    var uuid=Math.random().toString(16).substring(2,7);
+                    var params = {
+                        TableName: table,
+                        Item: {
+                            "macaddress": macaddress,
+                            "phone": "not set",
+                            "timestamp": new Date().toISOString(),
+                            "uuid":uuid,
+                            "info": {
+                                "foursqure": "none",
+                                "rating": 0
+                            }
+                        }
+                    }
+                    docClient.put(params, function (err, data) {
+                        if (err) {
+                            console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+                        } else {
+                            console.log("Added item:", JSON.stringify(data, null, 2));
+                        }
+                    });
+                    res.json({
+                        "status": uuid
+                    })
                 }
                 
             }
         });
-        if(flag===0) {
-            var uuid=Math.random().toString(36).substring(2);
-        var params = {
-            TableName: table,
-            Item: {
-                "macaddress": macaddress,
-                "phone": "not set",
-                "timestamp": new Date().toISOString(),
-                "uuid":uuid,
-                "info": {
-                    "foursqure": "none",
-                    "rating": 0
-                }
-            }
-        }
-        docClient.put(params, function (err, data) {
-            if (err) {
-                console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-            } else {
-                console.log("Added item:", JSON.stringify(data, null, 2));
-            }
-        });
-        res.json({
-            "status": uuid
-        })
-    }else{
-        res.json({
-            "status": "again"
-        })
-    }
+        
+    
 
     } 
 });
