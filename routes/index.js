@@ -1,9 +1,7 @@
-import {insertTelephoneNumber} from "../lib";
-
 var express = require('express');
 var router = express.Router();
 var MessagingResponse = require('twilio').twiml.MessagingResponse;
-
+var insertTelephoneNumber = require("../lib/insert-telephone");
 
 var cloudinary = require('cloudinary');
 cloudinary.config({
