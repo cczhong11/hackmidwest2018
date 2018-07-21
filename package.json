@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "aws-sdk": "^2.279.1",
     "base64-img": "^1.0.4",
     "cloudinary": "^1.11.0",
     "cookie-parser": "~1.4.3",
