@@ -19,12 +19,14 @@ router.get('/', function (req, res, next) {
         var scan_params = {
             TableName: table
         };
-    
+
         docClient.scan(scan_params, function (err, data) {
             if (err) {
                 console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
             } else {
-                console.log(data.Items);}});
+                console.log(data.Items);
+            }
+        });
     }
 });
 
