@@ -15,6 +15,7 @@
     "jade": "~1.11.0",
     "morgan": "~1.9.0",
     "namor": "^1.0.1",
+    "request-promise": "^4.2.2",
     "twilio": "^3.18.0"
   }
 }
