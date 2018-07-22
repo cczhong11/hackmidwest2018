@@ -99,6 +99,44 @@ function handleTextRequest(body, res) {
     else if (body.Body == "/mute" || body.Body == "/unmute") { // Mute or unmute conversations
 
     }
+    else if (body.Body.startsWith("/device")) { //IOT Proof of Concept Functionalities
+        var option = body.Body.replace("/device ", "");
+        console.log(option);
+        if (option.startsWith("add")){
+            // console.log("entered if");
+            var deviceName = option.replace("add ", "");
+            console.log(deviceName);
+            db.insertDevice(deviceName, function (sender) {
+                twiml.message(sender);
+                res.writeHead(200, {'Content-Type': 'text/xml'});
+                res.end(twiml.toString());
+            });
+        }
+        else if(option.startsWith("set")){
+            var option1 = option.replace("set ", "");
+            var deviceName = option1.substr(0,option1.indexOf(' '));
+            var value = option1.substr(option1.indexOf(' ')+1);
+            console.log(deviceName);
+            console.log(value);
+            db.modifyDevice(deviceName, value, function (sender) {
+                twiml.message(sender);
+                res.writeHead(200, {'Content-Type': 'text/xml'});
+                res.end(twiml.toString());
+            });
+        }
+        else if(option.startsWith("show")){
+            var result = "";
+            db.getAllDevices(function (sender) {
+                for (var i = 0; i < sender.length; i++){
+                    result += sender[i].device + " " + sender[i].value + "\n";
+                }
+                console.log(result);
+                twiml.message(result);
+                res.writeHead(200, {'Content-Type': 'text/xml'});
+                res.end(twiml.toString());
+            });
+        }
+    }
     else {
         sendDefaultTemplate(twiml, res);
     }
