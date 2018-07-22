@@ -25,13 +25,37 @@ function handleImageRequest(body, res) {
     const twiml = new MessagingResponse();
     if (body.Body === "/upload-pic") {
         cloudinary.v2.uploader.upload(body.MediaUrl0, function (error, result) {
-            console.log(error);
-            console.log(result);
+            twiml.message("Profile pic uploaded");
+            res.writeHead(200, {'Content-Type': 'text/xml'});
+            res.end(twiml.toString());
         });
     }
+    else if (body.Body === "/who") {
+        cloudinary.v2.uploader.upload(body.MediaUrl0, {detection: "aws_rek_face"}, function (error, result) {
+            if (result.info.detection.aws_rek_face.data
+                && result.info.detection.aws_rek_face.data.celebrity_faces
+                && result.info.detection.aws_rek_face.data.celebrity_faces.length) {
 
-    res.writeHead(200, {'Content-Type': 'text/xml'});
-    res.end(twiml.toString());
+                var faces = result.info.detection.aws_rek_face.data.celebrity_faces;
+                var names = "", urls = "\n";
+                for (var index = 0; index < faces.length; index++) {
+                    names += faces[index].name + ", ";
+                    if (faces[index].urls[0]) {
+                        urls += faces[index].urls[0] + "\n";
+                    }
+                }
+                names = names.slice(0, names.length - 2);
+                twiml.message("Found " + names + " in the image. " + urls);
+                res.writeHead(200, {'Content-Type': 'text/xml'});
+                res.end(twiml.toString());
+            }
+            else {
+                twiml.message("Sorry, no celebrity matches were found for the image");
+                res.writeHead(200, {'Content-Type': 'text/xml'});
+                res.end(twiml.toString());
+            }
+        });
+    }
 }
 
 function sendDefaultTemplate(twiml, res) {
@@ -49,7 +73,6 @@ function handleTextRequest(body, res) {
         sendDefaultTemplate(twiml, res);
     }
     else if (body.Body == "/menu" || body.Body.toLowerCase() == "hi") {
-        console.log("comes here");
         sendDefaultTemplate(twiml, res);
     }
     else if (body.Body.startsWith("/find")) {
