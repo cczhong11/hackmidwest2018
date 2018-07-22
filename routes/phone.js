@@ -17,7 +17,9 @@ router.get('/', function (req, res, next) {
     if (req.query.op === "getall") {
         var table = "hackathon"
         var scan_params = {
-            TableName: table
+            TableName: table,
+            FilterExpression: "phone = :p ",
+            ExpressionAttributeValues: {":p": "+"+req.query.tel}
         };
 
         docClient.scan(scan_params, function (err, data) {
@@ -25,6 +27,7 @@ router.get('/', function (req, res, next) {
                 console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
             } else {
                 console.log(data.Items);
+                res.json({"ok":"ok"})
             }
         });
     }
