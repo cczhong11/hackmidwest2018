@@ -97,7 +97,11 @@ function handleTextRequest(body, res) {
 
     }
     else if (body.Body == "/mute" || body.Body == "/unmute") { // Mute or unmute conversations
-
+        db.setUserMute(body.From, body.Body == "/mute", function (sender) {
+            twiml.message("You have been " + (body.Body == "/mute" ? "muted" : "unmuted") + " from global chat");
+            res.writeHead(200, {'Content-Type': 'text/xml'});
+            res.end(twiml.toString());
+        });
     }
     else {
         sendDefaultTemplate(twiml, res);
