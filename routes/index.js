@@ -1,7 +1,12 @@
 var express = require('express');
 var router = express.Router();
 var MessagingResponse = require('twilio').twiml.MessagingResponse;
-var insertTelephoneNumber = require("../lib/insert-telephone");
+var db = require("../lib/db");
+
+var twilio = require('twilio');
+var accountSid = 'AC5d3e038364d1c3628c4a56a1585ade0c';
+var authToken = '047877cc86d2dc3b072e4beb4b57606a';
+var client = new twilio(accountSid, authToken);
 
 var cloudinary = require('cloudinary');
 cloudinary.config({
@@ -32,22 +37,35 @@ function handleImageRequest(body, res) {
 function handleTextRequest(body, res) {
     const twiml = new MessagingResponse();
 
-    if(body.Body.startsWith("/register")) {
+    if (body.Body.startsWith("/register")) {
         const uuid = body.Body.replace("/register ", "");
-        insertTelephoneNumber(uuid, body.From);
-        twiml.message("\nHi\n\n/menu to access this menu\n/upload-pic To upload a profile pic\n/say to say something to everyone");
+        db.insertTelephoneNumber(uuid, body.From);
+        twiml.message("Hi\n\n/menu to access this menu\n/upload-pic To upload a profile pic\n/say to say something to everyone");
+        res.writeHead(200, {'Content-Type': 'text/xml'});
+        res.end(twiml.toString());
     }
     else if (body.Body.startsWith("/say")) {
-        const msg = body.Body.replace("/say ", "");
-        // Send to everyone
-        console.log("send " + msg + " to everyone");
+        const msg = body.Body.replace("/say ", "\n");
+        db.getAllUsers(body.From, function (users) {
+            for (var index = 0; index < users.length; index++) {
+                console.log(users[index]);
+                if (users[index].phone != "not set" && users[index].phone != body.From) {
+                    console.log("\n\n", users[index].phone, msg);
+                    client.messages.create({
+                        body: msg,
+                        to: users[index].phone,
+                        from: '+14804627562'
+                    })
+                        .then((message) => console.log(message.sid));
+                }
+            }
+        });
     }
     else {
-        twiml.message("\nHi\n\n/menu to access this menu\n/upload-pic To upload a profile pic\n/say to say something to everyone");
+        twiml.message("Hi\n\n/menu to access this menu\n/upload-pic To upload a profile pic\n/say to say something to everyone");
+        res.writeHead(200, {'Content-Type': 'text/xml'});
+        res.end(twiml.toString());
     }
-
-    res.writeHead(200, {'Content-Type': 'text/xml'});
-    res.end(twiml.toString());
 }
 
 router.post("/sms", (req, res) => {
