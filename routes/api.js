@@ -66,7 +66,7 @@ router.post('/', function (req, res, next) {
             }
         });
     }else if(req.query.op==="postarray"){
-        console.log(req.body);
+        console.log(req.bod);
         res.json({"res":"success"})
     }
 
@@ -96,6 +96,25 @@ router.get('/', function (req, res, next) {
 
             }
         });
+    }else if(req.query.op==="getall"){
+        
+            var table = "hackathon"
+            var scan_params = {
+                TableName: table,
+                ProjectionExpression:"macaddress"
+            };
+        
+            docClient.scan(scan_params, function (err, data) {
+                if (err) {
+                    console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+                } else {
+                    var macList = [];
+                    for(var i = 0;i< data.Items.length;i++){
+                        macList.push(data.Items[i].macaddress)
+                    }
+                    res.json({"data":macList})
+                }});
+        
     }
 });
 
