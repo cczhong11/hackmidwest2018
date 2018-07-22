@@ -55,7 +55,9 @@ function handleTextRequest(body, res) {
     else if (body.Body.startsWith("/find")) {
         const search = body.Body.replace("/find ", "\n");
         venueSearch.venueSearch(search, function (msg) {
-            twiml.message(msg);
+            twiml.message("Name: " + msg.name + "\n" + "Link: " + msg.gLink);
+            res.writeHead(200, {'Content-Type': 'text/xml'});
+            res.end(twiml.toString());
         });
     }
     else if (body.Body.startsWith("/say")) {
