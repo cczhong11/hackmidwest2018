@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var MessagingResponse = require('twilio').twiml.MessagingResponse;
 var db = require("../lib/db");
+var venueSearch = require("../lib/venue-search");
 
 var twilio = require('twilio');
 var accountSid = 'AC5d3e038364d1c3628c4a56a1585ade0c';
@@ -43,6 +44,12 @@ function handleTextRequest(body, res) {
         twiml.message("Hi\n\n/menu to access this menu\n/upload-pic To upload a profile pic\n/say to say something to everyone");
         res.writeHead(200, {'Content-Type': 'text/xml'});
         res.end(twiml.toString());
+    }
+    else if (body.Body.startsWith("/find")) {
+        const search = body.Body.replace("/find ", "\n");
+        venueSearch.venueSearch(search, function (msg) {
+            twiml.message(msg);
+        });
     }
     else if (body.Body.startsWith("/say")) {
         const msg = body.Body.replace("/say ", "\n");
