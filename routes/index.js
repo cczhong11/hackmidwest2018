@@ -56,10 +56,24 @@ function handleImageRequest(body, res) {
             }
         });
     }
+    else if (body.Body === "/what") {
+        cloudinary.v2.uploader.upload(body.MediaUrl0, function (error, result) {
+            if (result.tags.length) {
+                twiml.message("We found " + result.tags.join(", ") + " in the image");
+                res.writeHead(200, {'Content-Type': 'text/xml'});
+                res.end(twiml.toString());
+            }
+            else {
+                twiml.message("Sorry, we were unable to find anything in the image");
+                res.writeHead(200, {'Content-Type': 'text/xml'});
+                res.end(twiml.toString());
+            }
+        });
+    }
 }
 
 function sendDefaultTemplate(twiml, res) {
-    twiml.message("Hi\n\n/menu to access this menu\n/upload-pic To upload a profile pic\n/say to say something to everyone");
+    twiml.message("Hi\n\n/menu to access this menu\n\n/say to say something to everyone\n\n@<user> to DM a specific person\n\n/find with whatever you fancy and find it nearby\n\n/who with an image to identify a celebrity\n\n/what with an image to describe a scene\n\n/upload-pic To upload a profile pic");
     res.writeHead(200, {'Content-Type': 'text/xml'});
     res.end(twiml.toString());
 }
@@ -113,7 +127,7 @@ function handleTextRequest(body, res) {
     }
     else if (body.Body == "/username") {
         db.getUserFromPhone(body.From, function (sender) {
-            twiml.message("Your Username is @" + sender.uuid);
+            twiml.message("Your Username is " + sender.uuid);
             res.writeHead(200, {'Content-Type': 'text/xml'});
             res.end(twiml.toString());
         });
