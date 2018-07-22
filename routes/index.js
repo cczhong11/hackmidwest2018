@@ -5,8 +5,8 @@ var db = require("../lib/db");
 var venueSearch = require("../lib/venue-search");
 
 var twilio = require('twilio');
-var accountSid = 'AC5d3e038364d1c3628c4a56a1585ade0c';
-var authToken = '047877cc86d2dc3b072e4beb4b57606a';
+var accountSid = 'AC792139285f27743746036d76d2645703';
+var authToken = '69b061ade3640a61be4d742c2283b965';
 var client = new twilio(accountSid, authToken);
 
 var cloudinary = require('cloudinary');
@@ -34,7 +34,7 @@ function handleImageRequest(body, res) {
     res.end(twiml.toString());
 }
 
-function sendDefaultTemplate(twime, res) {
+function sendDefaultTemplate(twiml, res) {
     twiml.message("Hi\n\n/menu to access this menu\n/upload-pic To upload a profile pic\n/say to say something to everyone");
     res.writeHead(200, {'Content-Type': 'text/xml'});
     res.end(twiml.toString());
@@ -49,6 +49,7 @@ function handleTextRequest(body, res) {
         sendDefaultTemplate(twiml, res);
     }
     else if (body.Body == "/menu" || body.Body.toLowerCase() == "hi") {
+        console.log("comes here");
         sendDefaultTemplate(twiml, res);
     }
     else if (body.Body.startsWith("/find")) {
