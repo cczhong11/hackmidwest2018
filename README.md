@@ -14,3 +14,5 @@ The coolest part in our hack is using the wifi probe request to get nearby devic
 
 1. Nodejs backend implementation and design DynamoDB schema
 2. POC on Alexa Skills, enabled alexa and dynamoDB connection
+
+Our project win Sprint and Cloudinary prize
