@@ -5,15 +5,15 @@ var db = require("../lib/db");
 var venueSearch = require("../lib/venue-search");
 
 var twilio = require('twilio');
-var accountSid = 'AC792139285f27743746036d76d2645703';
-var authToken = '69b061ade3640a61be4d742c2283b965';
+var accountSid = 'xxxxxxxxxxxxxxxx';
+var authToken = 'xxxxxxxxxxxxxx';
 var client = new twilio(accountSid, authToken);
 
 var cloudinary = require('cloudinary');
 cloudinary.config({
     cloud_name: 'dbjaiwx9o',
     api_key: '957379348547858',
-    api_secret: 'rkZWvN_KZ3JRkm401WdfIJFoY9c'
+    api_secret: 'xxxxxxxxxxx'
 });
 
 /* GET home page. */
